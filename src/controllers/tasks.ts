@@ -2,14 +2,14 @@ import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { db } from "../db";
 import { tasks as tasksTable } from "../db/schema";
 import type { Request, Response } from "express";
-import { eq, desc} from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 // TODO: Standardize error messages and logging
 
 export async function getAllTasks(_req: Request, res: Response) {
   try {
+    console.log("[GET]: Fetching all tasks");
     const tasks = await db.select().from(tasksTable).orderBy(desc(tasksTable.createdAt));
-    console.log("Fetched tasks:", tasks);
     res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
@@ -19,7 +19,7 @@ export async function getAllTasks(_req: Request, res: Response) {
 
 export async function createTask(req: Request, res: Response) {
   const taskSchema = createInsertSchema(tasksTable);
-  console.log(req.body);
+  console.log("[POST]: Creating task with data:", req.body);
 
   const { data, success, error } = taskSchema.safeParse(req.body);
   if (!success) {
@@ -31,7 +31,6 @@ export async function createTask(req: Request, res: Response) {
 
   try {
     const task = await db.insert(tasksTable).values(data).returning();
-    console.log("Inserted task:", task);
     res.status(201).json(task);
   } catch (error) {
     console.error("Error inserting task:", error);
@@ -42,10 +41,9 @@ export async function createTask(req: Request, res: Response) {
 export async function deleteTask(req: Request, res: Response) {
   try {
     const taskId = parseInt(req.params.id);
-    console.log("Deleting task with ID:", taskId);
+    console.log("[DELETE]: Deleting task with ID:", taskId);
 
     const deletedTask = await db.delete(tasksTable).where(eq(tasksTable.id, taskId)).returning();
-    console.log("Deleted task:", deletedTask);
     res.status(200).json(deletedTask);
   } catch (error) {
     console.error("Error deleting task:", error);
@@ -57,6 +55,8 @@ export async function updateTask(req: Request, res: Response) {
   const taskId = parseInt(req.params.id);
   const taskSchema = createUpdateSchema(tasksTable);
 
+  console.log("[PUT]: Updating task with ID:", taskId, "and data:", req.body);
+
   const { data, success, error } = taskSchema.safeParse(req.body);
   if (!success) {
     console.error("Validation error:", error);
@@ -66,7 +66,6 @@ export async function updateTask(req: Request, res: Response) {
 
   try {
     const updatedTask = await db.update(tasksTable).set(data).where(eq(tasksTable.id, taskId)).returning();
-    console.log("Updated task:", updatedTask);
     res.status(200).json(updatedTask);
   } catch (error) {
     console.error("Error updating task:", error);

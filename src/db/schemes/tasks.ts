@@ -3,6 +3,6 @@ import { integer, boolean, pgTable, varchar, timestamp } from "drizzle-orm/pg-co
 export const tasks = pgTable("tasks", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   text: varchar({ length: 255 }).notNull(),
-  finished: boolean().notNull().default(true),
+  finished: boolean().notNull().default(false),
   createdAt: timestamp().notNull().$defaultFn(() => new Date()),
 });

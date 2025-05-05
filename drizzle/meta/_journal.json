@@ -8,6 +8,13 @@
       "when": 1746384240795,
       "tag": "0000_simple_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1746396075980,
+      "tag": "0001_aberrant_thundra",
+      "breakpoints": true
     }
   ]
 }
