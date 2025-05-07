@@ -10,7 +10,7 @@ export async function getAllTasks(_req: Request, res: Response) {
   try {
     console.log("[GET]: Fetching all tasks");
     const tasks = await db.select().from(tasksTable).orderBy(desc(tasksTable.createdAt));
-    res.json(tasks);
+    res.status(200).json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -30,8 +30,9 @@ export async function createTask(req: Request, res: Response) {
   }
 
   try {
-    const task = await db.insert(tasksTable).values(data).returning();
-    res.status(201).json(task);
+    const newTask = await db.insert(tasksTable).values(data).$returningId();
+    const insertedTask = await db.select().from(tasksTable).where(eq(tasksTable.id, newTask[0].id));
+    res.status(201).json(insertedTask[0]);
   } catch (error) {
     console.error("Error inserting task:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -43,8 +44,9 @@ export async function deleteTask(req: Request, res: Response) {
     const taskId = parseInt(req.params.id);
     console.log("[DELETE]: Deleting task with ID:", taskId);
 
-    const deletedTask = await db.delete(tasksTable).where(eq(tasksTable.id, taskId)).returning();
-    res.status(200).json(deletedTask);
+    const deletedTask = await db.select().from(tasksTable).where(eq(tasksTable.id, taskId));
+    await db.delete(tasksTable).where(eq(tasksTable.id, taskId));
+    res.status(200).json(deletedTask[0]);
   } catch (error) {
     console.error("Error deleting task:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -65,8 +67,9 @@ export async function updateTask(req: Request, res: Response) {
   }
 
   try {
-    const updatedTask = await db.update(tasksTable).set(data).where(eq(tasksTable.id, taskId)).returning();
-    res.status(200).json(updatedTask);
+    const existingTask = await db.select().from(tasksTable).where(eq(tasksTable.id, taskId));
+    await db.update(tasksTable).set(data).where(eq(tasksTable.id, taskId));
+    res.status(200).json({ ...existingTask[0], ...data });
   } catch (error) {
     console.error("Error updating task:", error);
     res.status(500).json({ error: "Internal Server Error" });

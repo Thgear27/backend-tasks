@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { getPostgresUrl } from "../utils/env";
+import { drizzle } from "drizzle-orm/mysql2";
+import { getMySQLUrl } from "../utils/env";
 
-export const db = drizzle(getPostgresUrl());
+export const db = drizzle(getMySQLUrl());

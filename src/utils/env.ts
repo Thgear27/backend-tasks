@@ -1,13 +1,13 @@
-export function getPostgresUrl(): string {
-  const POSTGRES_USER = process.env.POSTGRES_USER;
-  const POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD;
-  const POSTGRES_HOST = process.env.POSTGRES_HOST;
-  const POSTGRES_DB = process.env.POSTGRES_DB;
+export function getMySQLUrl(): string {
+  const MYSQL_USER = process.env.MYSQL_USER;
+  const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
+  const MYSQL_HOST = process.env.MYSQL_HOST;
+  const MYSQL_DB = process.env.MYSQL_DATABASE;
 
-  if (!POSTGRES_USER) throw new Error("Missing POSTGRES_USER environment variable");
-  if (!POSTGRES_PASSWORD) throw new Error("Missing POSTGRES_PASSWORD environment variable");
-  if (!POSTGRES_HOST) throw new Error("Missing POSTGRES_HOST environment variable");
-  if (!POSTGRES_DB) throw new Error("Missing POSTGRES_DB environment variable");
+  if (!MYSQL_USER) throw new Error("Missing MYSQL_USER environment variable");
+  if (!MYSQL_PASSWORD) throw new Error("Missing MYSQL_PASSWORD environment variable");
+  if (!MYSQL_HOST) throw new Error("Missing MYSQL_HOST environment variable");
+  if (!MYSQL_DB) throw new Error("Missing MYSQL_DATABASE environment variable");
 
-  return `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}`;
+  return `mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DB}`;
 }
